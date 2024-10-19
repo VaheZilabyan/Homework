@@ -21,9 +21,17 @@ public:
     char& operator[](size_t);
     const char& operator[](size_t) const;
 
+    void clear();
+    void reserve(size_t);
+    void push_back(char ch);
+    void pop_back();
+    String& insert(size_t index, const char *str);
+    //String& insert(size_t index, size_t count, char ch);
+
 private:
     struct string_structure_
     {
+        //size_t sz{0};
         size_t capacity;
         char *data;
     };
@@ -33,7 +41,7 @@ private:
         char sso_buffer_[SSO_BUFFER_SIZE + 1];
         string_structure_ long_string_;
     };
-    bool is_long_;
+    bool is_long_{false};
 };
 
 } // namespace my_string

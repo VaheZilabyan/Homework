@@ -7,11 +7,18 @@ int main()
     using std::endl;
     using namespace my_string;
 
-    String s("Hello World!!!!!sdf");
+    String s("Hello!");
 
-    cout << s.c_str() << endl;
-    cout << s.size() << endl;
-    cout << s.capacity() << endl;
+    cout << "str     : " << s.c_str() << endl;
+    cout << "size    : " << s.size() << endl;
+    cout << "capacity: " << s.capacity() << endl;
+
+    s.insert(2, "123456789abcdqwerty");
+
+
+    cout << "str     : " << s.c_str() << endl;
+    cout << "size    : " << s.size() << endl;
+    cout << "capacity: " << s.capacity() << endl;
 
     return 0;
 }

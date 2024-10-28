@@ -38,10 +38,11 @@ vector<T, Allocator>::vector(const std::initializer_list<T>& il, const Allocator
 
 template <typename T, typename Allocator>
 void vector<T, Allocator>::reserve(size_t n) {
+    std::unique_lock<std::mutex> lock;
     if (n <= capacity_) return;
     //T *newarr = alloc_.allocate(n);
 
-    T *newarr = alloc_.allocate(n, arr_);
+    T *newarr = alloc_.allocate(n); //alloc_.allocate(n, arr_); seg fault (when use realloc)
     /* std::cout << "old address: " << arr_ << "\n";
     std::cout << "new address: " << newarr << "\n";*/
 
@@ -57,6 +58,7 @@ void vector<T, Allocator>::reserve(size_t n) {
 
 template <typename T, typename Allocator>
 typename vector<T, Allocator>::iterator vector<T, Allocator>::insert(iterator pos, const T& value) {
+    std::unique_lock<std::mutex> lock;
     size_t dif = pos - begin();
     if (dif > size_) throw std::out_of_range("munmap_chunk(): invalid pointer");
     if (size_ == capacity_) {
@@ -75,6 +77,7 @@ typename vector<T, Allocator>::iterator vector<T, Allocator>::insert(iterator po
 
 template <typename T, typename Allocator>
 typename vector<T, Allocator>::iterator vector<T, Allocator>::erase(iterator pos) {
+    std::unique_lock<std::mutex> lock;
     size_t dif = pos - begin();
     if (dif >= size_) throw std::out_of_range("position >= vector size");
     if (dif == size_ - 1) {
@@ -91,6 +94,7 @@ typename vector<T, Allocator>::iterator vector<T, Allocator>::erase(iterator pos
 
 template <typename T, typename Allocator>
 void vector<T, Allocator>::push_back(const T& value) {
+    std::unique_lock<std::mutex> lock;
     if (size_ >= capacity_) {
         size_t newCapacity = (capacity_ == 0) ? 1 : (size_ * 2);
         reserve(newCapacity);
@@ -101,22 +105,26 @@ void vector<T, Allocator>::push_back(const T& value) {
 
 template <typename T, typename Allocator>
 void vector<T, Allocator>::pop_back() {
+    std::unique_lock<std::mutex> lock;
     alloc_.destroy(arr_ + size_);
     --size_;
 }
 
 template <typename T, typename Allocator>
 const T &vector<T, Allocator>::operator [](size_t index) const {
+    std::shared_lock<std::mutex> lock;
     return arr_[index];
 }
 
 template <typename T, typename Allocator>
 T& vector<T, Allocator>::operator[](size_t index) {
+    std::unique_lock<std::mutex> lock;
     return arr_[index];
 }
 
 template<typename T, typename Allocator>
 void vector<T, Allocator>::clear() {
+    std::unique_lock<std::mutex> lock;
     for(size_t i = 0; i < size_; ++i) {
         //(arr_ + i)->~T();
         alloc_.destroy(arr_ + i);
@@ -127,6 +135,7 @@ void vector<T, Allocator>::clear() {
 
 template <typename T, typename Allocator>
 void vector<T, Allocator>::resize(size_t n, const T& value) {
+    std::unique_lock<std::mutex> lock;
     if (n <= size_) {
         size_ = n;
     } else {
@@ -145,23 +154,27 @@ void vector<T, Allocator>::resize(size_t n, const T& value) {
 
 template<typename T, typename Allocator>
 void vector<T, Allocator>::shrink_to_fit() {
+    std::unique_lock<std::mutex> lock;
     capacity_ = size_;
 }
 
 template <typename T, typename Allocator>
 T& vector<T, Allocator>::at(size_t i) {
+    std::unique_lock<std::mutex> lock;
     if (i >= size_) throw std::out_of_range("index >= size");
     return arr_[i];
 }
 
 template <typename T, typename Allocator>
 const T& vector<T, Allocator>::at(size_t i) const {
+    std::shared_lock<std::mutex> lock;
     if (i >= size_) throw std::out_of_range("index >= size");
     return arr_[i];
 }
 
 template<typename T, typename Allocator>
 vector<T, Allocator>& vector<T, Allocator>::operator=(const vector& other) {
+    std::unique_lock<std::mutex> lock;
     if (this != &other) {
         T *newarr = alloc_.allocate(other.capacity_);
 
@@ -181,6 +194,7 @@ vector<T, Allocator>& vector<T, Allocator>::operator=(const vector& other) {
 
 template<typename T, typename Allocator>
 vector<T, Allocator>::~vector() {
+    std::unique_lock<std::mutex> lock;
     if (empty()) {
         clear();
     }

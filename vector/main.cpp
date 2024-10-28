@@ -3,6 +3,8 @@
 #include "allocator.h"
 #include "vector.h"
 
+#include <vector>
+
 using std::cout;
 using std::endl;
 using namespace myStl;
@@ -49,13 +51,20 @@ void mergeSort(my_vector::iterator left, my_vector::iterator right) {
 
 int main()
 {
-    my_vector vec = {9, 3, 5, 2, 1, 4};
+    my_vector vec;
+    vec.push_back(15);
+    vec.push_back(11);
+    vec.push_back(13);
 
-    mergeSort(vec.begin(), vec.end() - 1);
+    //mergeSort(vec.begin(), vec.end() - 1);
 
     for (int i : vec) {
         cout << i << " ";
     } cout << endl;
+
+    /*std::vector<int> v;
+    v.push_back(5);
+    cout << v.size() << " " << v.capacity() << endl;*/
 
     cout << "end..." << endl;
     return 0;

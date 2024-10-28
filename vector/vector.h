@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <iterator>
 #include <initializer_list>
+#include <mutex>
+#include <shared_mutex>
 
 namespace myStl {
 
@@ -136,6 +138,7 @@ public:
         T *ptr_;
     };
 private:
+    std::mutex m;
     Allocator alloc_;
     size_t size_;
     size_t capacity_;
